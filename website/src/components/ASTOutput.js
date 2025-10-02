@@ -1,7 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import cx from '../utils/classnames.js';
+import {publish} from '../utils/pubsub.js';
 import visualizations from './visualization';
+import {TREE_SNAPSHOT_EVENT} from './visualization/tree/snapshotEvent.js';
 
 const {useState} = React;
 
@@ -19,6 +21,8 @@ export default function ASTOutput({parseResult={}, position=null}) {
   const [selectedOutput, setSelectedOutput] = useState(0);
   const {ast=null} = parseResult;
   let output;
+
+  const showTreeSnapshotButton = ast && Number(selectedOutput) === 0;
 
   if (parseResult.error) {
     output =
@@ -55,10 +59,22 @@ export default function ASTOutput({parseResult={}, position=null}) {
       </button>,
   );
 
+  let treeSnapshotButton = null;
+  if (showTreeSnapshotButton) {
+    treeSnapshotButton = (
+      <button
+        type="button"
+        onClick={() => publish(TREE_SNAPSHOT_EVENT)}>
+        Copy Tree Snapshot
+      </button>
+    );
+  }
+
   return (
     <div className="output highlight">
       <div className="toolbar">
         {buttons}
+        {treeSnapshotButton}
         <span className="time">
           {formatTime(parseResult.time)}
         </span>

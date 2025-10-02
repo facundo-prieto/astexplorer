@@ -141,6 +141,7 @@ const Element = React.memo(function Element({
     autofocus && (isInRange || hasChildrenInRange),
   );
   const element = useRef();
+
   if (autofocus && isInRange && !hasChildrenInRange) {
     focusNodes('add', element);
   }
@@ -343,6 +344,11 @@ Element.propTypes = {
   level: PropTypes.number,
   treeAdapter: PropTypes.object.isRequired,
   autofocus: PropTypes.bool,
+  isInRange: PropTypes.bool,
+  hasChildrenInRange: PropTypes.bool,
+  selected: PropTypes.bool,
+  onClick: PropTypes.func,
+  position: PropTypes.number,
   parent: PropTypes.oneOfType([
     PropTypes.object,
     PropTypes.array,
