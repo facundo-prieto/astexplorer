@@ -1,10 +1,14 @@
 import CompactArrayView from './CompactArrayView';
 import CompactObjectView from './CompactObjectView';
 import PropTypes from 'prop-types';
-import {publish} from '../../../utils/pubsub.js';
+import {publish, subscribe} from '../../../utils/pubsub.js';
 import React from 'react';
 import {useSelectedNode} from '../SelectedNodeContext.js';
 import focusNodes from '../focusNodes.js'
+import {
+  TREE_EXPAND_ALL_EVENT,
+  TREE_COLLAPSE_ALL_EVENT,
+} from './treeActions.js';
 
 import cx from '../../../utils/classnames.js';
 import stringify from '../../../utils/stringify';
@@ -141,6 +145,19 @@ const Element = React.memo(function Element({
     autofocus && (isInRange || hasChildrenInRange),
   );
   const element = useRef();
+
+  useEffect(() => {
+    const unsubExpand = subscribe(TREE_EXPAND_ALL_EVENT, () => {
+      setOpenState(OPEN_STATES.DEEP_OPEN);
+    });
+    const unsubCollapse = subscribe(TREE_COLLAPSE_ALL_EVENT, () => {
+      setOpenState(level === 0 ? OPEN_STATES.DEFAULT : OPEN_STATES.CLOSED);
+    });
+    return () => {
+      unsubExpand();
+      unsubCollapse();
+    };
+  }, [setOpenState, level]);
 
   if (autofocus && isInRange && !hasChildrenInRange) {
     focusNodes('add', element);

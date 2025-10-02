@@ -6,6 +6,24 @@
 .tree-visualization > .toolbar {
   padding: 5px;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tree-visualization .toolbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tree-visualization .toolbar-filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .tree-visualization > .toolbar label {
@@ -14,6 +32,30 @@
   -webkit-touch-callout: none;
   user-select: none;
   white-space: nowrap;
+}
+
+.tree-visualization .toolbar-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tree-visualization .toolbar-actions button.active {
+  font-weight: 600;
+}
+
+.tree-visualization .toolbar-divider {
+  display: inline-block;
+  width: 1px;
+  height: 20px;
+  background: rgba(0, 0, 0, 0.1);
+  margin-right: 4px;
+}
+
+.tree-visualization .toolbar-helper {
+  font-size: 11px;
+  opacity: 0.7;
 }
 
 .tree-visualization ul {

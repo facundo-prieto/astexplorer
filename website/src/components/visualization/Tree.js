@@ -5,11 +5,22 @@ import {publish, subscribe} from '../../utils/pubsub.js';
 import {treeAdapterFromParseResult} from '../../core/TreeAdapter.js';
 import {SelectedNodeProvider} from './SelectedNodeContext.js';
 import focusNodes from './focusNodes.js'
-import {TREE_SNAPSHOT_EVENT} from './tree/snapshotEvent.js';
+import {
+  TREE_SNAPSHOT_EVENT,
+  TREE_EXPAND_ALL_EVENT,
+  TREE_COLLAPSE_ALL_EVENT,
+} from './tree/treeActions.js';
 
 import './css/tree.css'
 
-const {useReducer, useMemo, useRef, useLayoutEffect, useEffect} = React;
+const {
+  useReducer,
+  useMemo,
+  useRef,
+  useLayoutEffect,
+  useEffect,
+  useCallback,
+} = React;
 
 const STORAGE_KEY = 'tree_settings';
 
@@ -80,23 +91,47 @@ export default function Tree({parseResult, position}) {
     return unsubscribe;
   }, [rootElement]);
 
+  const handleExpandAll = useCallback(() => {
+    publish(TREE_EXPAND_ALL_EVENT);
+  }, []);
+
+  const handleCollapseAll = useCallback(() => {
+    publish(TREE_COLLAPSE_ALL_EVENT);
+  }, []);
+
+  const handleSnapshot = useCallback(() => {
+    publish(TREE_SNAPSHOT_EVENT);
+  }, []);
+
   return (
     <div className="tree-visualization container">
       <div className="toolbar">
-        <label title="Auto open the node at the cursor in the source code">
-          {makeCheckbox('autofocus', settings, updateSettings)}
-          Autofocus
-        </label>
-        &#8203;
-        {treeAdapter.getConfigurableFilters().map(filter => (
-          <span key={filter.key}>
-            <label>
-              {makeCheckbox(filter.key, settings, updateSettings)}
-              {filter.label}
+        <div className="toolbar-content">
+          <div className="toolbar-filters">
+            <label title="Auto open the node at the cursor in the source code">
+              {makeCheckbox('autofocus', settings, updateSettings)}
+              Autofocus
             </label>
-            &#8203;
-          </span>
-        ))}
+            {treeAdapter.getConfigurableFilters().map(filter => (
+              <label key={filter.key}>
+                {makeCheckbox(filter.key, settings, updateSettings)}
+                {filter.label}
+              </label>
+            ))}
+          </div>
+          <div className="toolbar-actions">
+            <span className="toolbar-divider" aria-hidden="true" />
+            <button type="button" onClick={handleSnapshot}>
+              Copy Tree Snapshot
+            </button>
+            <button type="button" onClick={handleExpandAll}>
+              Expand All
+            </button>
+            <button type="button" onClick={handleCollapseAll}>
+              Collapse All
+            </button>
+          </div>
+        </div>
       </div>
       <ul ref={rootElement} onMouseLeave={() => {publish('CLEAR_HIGHLIGHT');}}>
         <SelectedNodeProvider>

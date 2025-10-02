@@ -213,6 +213,7 @@ export default class Editor extends React.Component {
     );
   }
 
+
   render() {
     return (
       <div className="editor" ref={c => this.container = c}/>
